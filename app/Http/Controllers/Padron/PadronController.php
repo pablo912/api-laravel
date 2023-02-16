@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 use ZipArchive;
 
 class PadronController extends Controller
@@ -29,27 +30,25 @@ class PadronController extends Controller
 
         try {
 
-
             $carpeta = base_path().'/public/padron_rar/';
-
+            
             if(!file_exists($carpeta)) {
                 mkdir($carpeta, 0777, true);
             }
 
+
             $filepath = str_replace(DIRECTORY_SEPARATOR, '/', public_path("padron_rar".DIRECTORY_SEPARATOR."padron_reducido_ruc.zip"));
-           
-            $curl = Http::retry(2,100)->get('https://www2.sunat.gob.pe/padron_reducido_ruc.zip');
 
-            $response = $curl->body();
+            $contents = file_get_contents('https://www2.sunat.gob.pe/padron_reducido_ruc.zip');   
 
-            file_put_contents($filepath, $response);
+            file_put_contents($filepath, $contents);
 
            $data = [ 
              'success' => true,
              'message' => 'Datos descargados de sunat correctamente'
             ];
 
-             return $this->showMessage($data,200);
+              return $this->showMessage($data,200);
 
         }catch(Exception $e)
         {   
