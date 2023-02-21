@@ -5,6 +5,7 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -25,13 +26,28 @@ class DatabaseSeeder extends Seeder
 
         ]);
 
+        \App\Models\Plan::create([
+            'description' => 'Basico',
+        ]);
+        \App\Models\Plan::create([
+            'description' => 'Empresarial',
+        ]);
+        \App\Models\Plan::create([
+            'description' => 'Premium',
+        ]);
+
         \App\Models\User::create([
-            'name' => 'Pablo Santiago',
+
+            'name' => 'Pablo',
+            'surname' => 'Santiago',
             'email' => 'admin@gmail.com',
             'password' => Hash::make('123456'),
-            'verification_token' => User::generarVerificationToken()
-       
+            'verification_token' => User::generarVerificationToken(),
+            'plan_id' => 3,
+            'expiration_date' => Carbon::now()->addYear()->format('Y-m-d')
 
         ]);
+
+ 
     }
 }

@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Padron;
 
 use App\Http\Controllers\Controller;
+use App\Models\Empresa;
 use App\Models\Update;
 use App\Traits\ApiResponser;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use ZipArchive;
 
@@ -121,9 +124,11 @@ class PadronController extends Controller
 
         try {
 
-
+            
             DB::table('empresas')->truncate();
-      
+       
+            $this->removeIndexMigration();
+
             $file = public_path();
             $prefix = 'padron_extract';
             $prefix2 = 'txt';
@@ -131,7 +136,7 @@ class PadronController extends Controller
             $file =  str_replace(DIRECTORY_SEPARATOR, '/', public_path("{$prefix}" . DIRECTORY_SEPARATOR . "{$key}.{$prefix2}"));
            
             $query = "LOAD DATA LOCAL INFILE '" . $file . "'
-            INTO TABLE empresas  FIELDS TERMINATED BY '|' LINES TERMINATED BY '\n' IGNORE 1 LINES
+            INTO TABLE empresas FIELDS TERMINATED BY '|' LINES TERMINATED BY '\n' IGNORE 1 LINES
                     (ruc,
                     razon,
                     estado,
@@ -151,18 +156,21 @@ class PadronController extends Controller
                     @created_at,
                     @updated_at)
             SET status=1,created_at=NOW(),updated_at=null";
+
             DB::connection()->getPdo()->exec($query);
+
+            $this->addIndexMigration();
+
             $date = Carbon::now();
             $date = $date->format('Y-m-d');
+     
             Update::create([
                 "date" => $date
             ]);
+     
             $row = Update::get()->last();
             $update_last = Carbon::parse($row->date)->format('d-m-Y');
-            // if (file_exists($file)) {
-            //     if (unlink($file)) {
-            //     }
-            // }
+     
 
             $extract = base_path().'/public/padron_extract/';
             $rar = base_path().'/public/padron_rar/';
@@ -181,6 +189,50 @@ class PadronController extends Controller
                  return $this->errorResponse($error,400);
         }
     }
+
+
+    protected function addIndexMigration(){
+
+        Schema::table('empresas', function(Blueprint $table)
+        {   
+            $index =  collect(DB::select("SHOW INDEXES FROM empresas"))->pluck('Key_name')->contains('empresas_ruc_index');
+
+            if(!$index){
+
+                $table->index('ruc');
+
+            }
+
+        
+        });
+
+    }
+
+
+    protected function removeIndexMigration(){
+
+        
+
+        Schema::table('empresas', function (Blueprint $table) {
+
+            $index =  collect(DB::select("SHOW INDEXES FROM empresas"))->pluck('Key_name')->contains('empresas_ruc_index');
+
+            if($index){
+
+                $table->dropIndex("empresas_ruc_index");
+
+            }
+
+          
+        });
+
+    
+
+    }
+
+
+
+
 
 
 }

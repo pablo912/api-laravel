@@ -15,9 +15,10 @@ class CreateProvincesTable extends Migration
     public function up()
     {
         Schema::create('provinces', function (Blueprint $table) {
-            $table->char('id', 4)->index();
-            $table->char('department_id', 2);
+            $table->char('id', 4)->primary();
+        
             $table->string('description');
+            $table->char('department_id', 2);
             $table->boolean('active')->default(true);
 
             $table->foreign('department_id')->references('id')->on('departments');

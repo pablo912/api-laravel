@@ -5,9 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class District extends Model
-{   
-    protected $primaryKey = 'id';
-
+class Sire extends Model
+{
     use HasFactory;
 }

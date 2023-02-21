@@ -31,10 +31,15 @@ class CreateEmpresasTable extends Migration
             $table->string('departamento');
             $table->string('manzana');
             $table->string('km');
-            $table->integer('status')->nullable();
             $table->string('direccion')->nullable();
-          
+            $table->tinyInteger('status')->default(1);
             $table->timestamps();
+      
+        
+     
+      
+    
+     
         });
     }
 

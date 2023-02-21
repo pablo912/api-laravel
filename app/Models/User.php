@@ -7,9 +7,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
+use Laravel\Passport\HasApiTokens;
+
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasApiTokens;
 
     const USUARIO_VERIFICADO = '1';
     const USUARIO_NO_VERIFICADO = '0';
@@ -29,7 +31,8 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password','verification_token','verified','admin','active'
+        'name', 'surname', 'email', 'password','verification_token','verified','admin','active','plan_id',
+        'expiration_date'
     ];
 
     /**
@@ -56,4 +59,10 @@ class User extends Authenticatable
         return Str::random(40);
     }
 
+    public function plan(){
+
+        return $this->belongsTo(Plan::class);
+
+    }
+    
 }

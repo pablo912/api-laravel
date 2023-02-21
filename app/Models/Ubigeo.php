@@ -9,14 +9,6 @@ class Ubigeo extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'id',
-        'ubigeo',
-        'dpto',
-        'prov',
-        'distrito',
-        'ubigeo2',
-        'orden'
-    ];
+
 
 }
