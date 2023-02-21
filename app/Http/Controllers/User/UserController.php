@@ -142,12 +142,9 @@ class UserController extends Controller
 
         $user = auth()->user();
         
-        $user->tokens->each(function($token,$key) {
-
-            $token->delete();
-
-        });
-
+        $user->token()->delete();
+        $user->save();
+        
         $data = [
             
             'success' => true,
