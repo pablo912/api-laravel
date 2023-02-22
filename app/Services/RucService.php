@@ -9,18 +9,23 @@ use App\Models\Empresa;
 use App\Models\Province;
 use GuzzleHttp\Client;
 use App\Services\SunatService;
+
+use App\Traits\ApiResponser;
 use DiDom\Document as DiDom;
+use Illuminate\Support\Facades\Http;
 
+class RucService
+{
 
-class RucService{
-
+    use ApiResponser;
 
     private $sunat;
-    
+   
     public function __construct(SunatService $sunat)
     {
     
         $this->sunat = $sunat;
+      
     }
 
     public function consultar_ruc($ruc,$id=false,$view_address=true){
@@ -128,10 +133,8 @@ class RucService{
 
         }
 
-        return [
-            'success' => false,
-            'message'=> "El número de RUC no fué encontrado."
-        ];
+
+        return $this->errorResponse('El número de RUC no fué encontrado.',404);
 
 
     }
@@ -145,6 +148,7 @@ class RucService{
             $consultar_sunat=false;
             if(substr($ruc, 0, 2)=="10" || substr($ruc, 0, 2)=="15" || substr($ruc, 0, 2)=="17"){
 
+           
                 $company=Company::first();
 
                 $result = $this->sunat->processRuc10($company->ruc,$company->usuario_sol,$company->clave_sol,$ruc);
@@ -166,12 +170,18 @@ class RucService{
             }
 
             $this->sunat->requestHttp("https://e-consultaruc.sunat.gob.pe/cl-ti-itmrconsruc/jcrS00Alias?accion=consPorRazonSoc&razSoc=CHACCCHI","POST");
-            $httpRequest=$this->sunat->requestHttp("https://e-consultaruc.sunat.gob.pe/cl-ti-itmrconsruc/jcrS00Alias?accion=consPorRazonSoc&razSoc=CHACCCHI","POST");
+                      
+            $httpRequest = $this->sunat->requestHttp("https://e-consultaruc.sunat.gob.pe/cl-ti-itmrconsruc/jcrS00Alias?accion=consPorRazonSoc&razSoc=CHACCCHI","POST");
+        
+           
 
             if($httpRequest['success']==true){
 
                $document = new DiDom($httpRequest['data']);
+
+            
                $posts = $document->find('form')[0]->find('input');
+          
                $random=explode("=",$posts[3]->html());
                $random=substr($random[3],1,strlen($random[3])-3);
                $http_Request=$this->sunat->requestHttp("https://e-consultaruc.sunat.gob.pe/cl-ti-itmrconsruc/jcrS00Alias?accion=consPorRuc&actReturn=1&modo=1&nroRuc=".$ruc."&numRnd=".$random,"POST");
@@ -340,12 +350,10 @@ class RucService{
                 ];
     
             }
-        }
+         }
         
 
     }
-
-
 
 
     protected function getAddress($site){

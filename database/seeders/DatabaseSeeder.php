@@ -44,6 +44,7 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('123456'),
             'verification_token' => User::generarVerificationToken(),
             'plan_id' => 3,
+            'admin' => true,
             'expiration_date' => Carbon::now()->addYear()->format('Y-m-d')
 
         ]);

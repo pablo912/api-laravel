@@ -84,6 +84,8 @@ class SearchController extends Controller
     }
 
 
+
+
     protected function accessToken($request){
 
         $rules = [

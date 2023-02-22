@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Invoice\InvoiceController;
 use App\Http\Controllers\Padron\PadronController;
 use App\Http\Controllers\Plan\PlanController;
 use App\Http\Controllers\Search\SearchController;
@@ -42,12 +43,15 @@ Route::middleware('fox')->group( function () {
 
         Route::get('/{numero}', [SearchController::class, 'ruc'] );
         Route::get('/plus/{numero}', [SearchController::class, 'rusplus'] );
+        Route::get('/num/{numero}', [SearchController::class, 'rusplusdemo'] );
     }); 
     
 
 });
 
 
+Route::post('/boleta', [ InvoiceController::class, 'boleta']);
+Route::post('/factura', [ InvoiceController::class, 'factura']);
 
 
 Route::middleware('auth:api')->group( function () {
