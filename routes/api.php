@@ -54,7 +54,7 @@ Route::post('/boleta', [ InvoiceController::class, 'boleta']);
 Route::post('/factura', [ InvoiceController::class, 'factura']);
 
 
-Route::middleware('auth:api')->group( function () {
+// Route::middleware('auth:api')->group( function () {
 
     Route::delete('/logout', [UserController::class, 'logout'])->middleware('auth:api');
     Route::get('/renew', [UserController::class,'me']);
@@ -63,6 +63,6 @@ Route::middleware('auth:api')->group( function () {
     Route::get('/extract',  [ PadronController::class, 'extract']);
     Route::get('/load',  [ PadronController::class, 'loadtdata']);
     Route::get('/plan', [PlanController::class, 'index']);
-});
+// });
 
 

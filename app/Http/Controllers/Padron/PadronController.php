@@ -51,7 +51,7 @@ class PadronController extends Controller
              'message' => 'Datos descargados de sunat correctamente'
             ];
 
-              return $this->showMessage($data,200);
+            return $this->showMessage($data,200);
 
         }catch(Exception $e)
         {   
@@ -178,11 +178,14 @@ class PadronController extends Controller
             // $this->rmDir_rf($extract);
             // $this->rmDir_rf($rar);
 
-            return [
+            $data = [
                 'success' => true,
                 'message' => 'Datos csv cargados a BD correctamente',
                 'ultima_actualizacion' => $update_last
             ];
+
+            return $this->showMessage($data,200);
+
         } catch (Exception $e) {
                  $error = ['success' => false, 'message' => $e->getMessage()];
 

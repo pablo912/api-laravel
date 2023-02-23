@@ -2,7 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Http\Controllers\Padron\PadronController;
+use Exception;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class TestTask extends Command
@@ -25,10 +28,28 @@ class TestTask extends Command
      * Execute the console command.
      */
     public function handle(): void
-    {
-        $texto = "[" . date("Y-m-d H:i:s") . "]: Hola mi nombre es pablo santiago";
+    {   
+        try{
 
-        Storage::append("arcbivo.txt", $texto);
+            Log::debug('Init Download');
+            $download = app(PadronController::class)->download();
+            Log::debug('End Download: '. $download );  
+            
+            Log::debug('Init Extractor');
+            $extractor = app(PadronController::class)->extract();
+            Log::debug('End Extractor: '.$extractor);
+    
+            Log::debug('Init Load data');
+            $loadtdata = app(PadronController::class)->loadtdata();
+            Log::debug('End Load data: ' .$loadtdata );
+    
 
+        }catch(Exception $e){
+
+            Log::debug($e->getMessage());
+            
+        }
+
+     
     }
 }
