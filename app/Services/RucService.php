@@ -9,6 +9,7 @@ use App\Models\Empresa;
 use App\Models\Province;
 use GuzzleHttp\Client;
 use App\Services\SunatService;
+use App\Services\BetaService;
 
 use App\Traits\ApiResponser;
 use DiDom\Document as DiDom;
@@ -20,12 +21,14 @@ class RucService
     use ApiResponser;
 
     private $sunat;
+
    
     public function __construct(SunatService $sunat)
     {
     
         $this->sunat = $sunat;
-      
+  
+ 
     }
 
     public function consultar_ruc($ruc,$id=false,$view_address=true){
@@ -58,6 +61,8 @@ class RucService
                 }else if(substr($ruc,0,2)=="10" || substr($ruc,0,2)=="15" || substr($ruc,0,2)=="17"){
 
                     $response_ubigeo = $this->sunat->loginInSunat("10448173173","44817317", "Elpoder20", 'direccion',$ruc);  
+                    
+              
 
                     $ubigeo = $response_ubigeo['ubigeo'];
                     $direccion_completa = $response_ubigeo['direccion'];
