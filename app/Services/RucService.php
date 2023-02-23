@@ -48,40 +48,21 @@ class RucService
 
             $direccion_completa = $this->getAddress($site);
 
-            if($site->direccion=="-" || $site->direccion=="" || $site->direccion==null || $site->ubigeo == "" || $site->ubigeo == "-"){
-
-                if(substr($ruc,0,2)=="10" || substr($ruc,0,2)=="15" || substr($ruc,0,2)=="17"){
+        
+                if(substr($ruc,0,2)=="20" ||  substr($ruc,0,2)=="10" || substr($ruc,0,2)=="15" || substr($ruc,0,2)=="17"){
 
                     $response_ubigeo = $this->sunat->loginInSunat("10448173173","44817317", "Elpoder20", 'direccion',$ruc);  
 
                     $ubigeo = $response_ubigeo['ubigeo'];
                     $direccion_completa = $response_ubigeo['direccion'];
 
+
                     $site->ubigeo = $ubigeo;
                     $site->direccion =$direccion_completa;
                     $site->save();
 
-                }else if(substr($ruc,0,2)=="20"){
-
-                    $ubigeo = $site->ubigeo;
-                    $direccion_completa = $this->getAddress($site);
-
                 }
 
-            }
-            
-            else{
-
-             
-                $direccion_completa = $site->direccion;
-                $ubigeo = $site->ubigeo;
-
-            }
-
-            
-    
-        
-        
 
             if($ubigeo != null || $ubigeo != "" || $ubigeo != "-"){
 
@@ -123,6 +104,8 @@ class RucService
                 'ubigeo' => $ubigeo_data
             ];
 
+        
+
 
             return [
                 'success' => true,
@@ -144,71 +127,81 @@ class RucService
 
         try{
 
+            $empresas = Empresa::where('ruc', $ruc)->first();
+
             $direccion_sunat="";
+
             $consultar_sunat=false;
-            if(substr($ruc, 0, 2)=="10" || substr($ruc, 0, 2)=="15" || substr($ruc, 0, 2)=="17"){
 
-           
-                $company=Company::first();
 
-                $result = $this->sunat->processRuc10($company->ruc,$company->usuario_sol,$company->clave_sol,$ruc);
-          
-                if ($result['success']==true){
-
-                     $direccion_sunat=$result['data'];
+            $resultDir = $this->sunat->loginInSunat("10448173173","44817317", "Elpoder20", 'direccion',$ruc);                
+        
+            if ($resultDir['success']==true){
                     
-                 }else{
+                    $direccion_sunat = $resultDir['direccion'];
+                    $ubigeo_sunat = $resultDir['ubigeo'];
+
+                    $empresas->ubigeo = $ubigeo_sunat;
+                    $empresas->direccion =$direccion_sunat;
+                    $empresas->save();
+
+                    $consultar_sunat=true;
+                     
+                 } else {
 
                      $direccion_sunat="-";
+                     $consultar_sunat=false;
 
-                 }
-
-                 $consultar_sunat=true;
-
-            }else{
-                 $consultar_sunat=false;
             }
+          
 
             $this->sunat->requestHttp("https://e-consultaruc.sunat.gob.pe/cl-ti-itmrconsruc/jcrS00Alias?accion=consPorRazonSoc&razSoc=CHACCCHI","POST");
-                      
-            $httpRequest = $this->sunat->requestHttp("https://e-consultaruc.sunat.gob.pe/cl-ti-itmrconsruc/jcrS00Alias?accion=consPorRazonSoc&razSoc=CHACCCHI","POST");
-        
-           
+            $httpRequest=$this->sunat->requestHttp("https://e-consultaruc.sunat.gob.pe/cl-ti-itmrconsruc/jcrS00Alias?accion=consPorRazonSoc&razSoc=CHACCCHI","POST");
+
+          
 
             if($httpRequest['success']==true){
-
+        
                $document = new DiDom($httpRequest['data']);
-
             
                $posts = $document->find('form')[0]->find('input');
-          
                $random=explode("=",$posts[3]->html());
                $random=substr($random[3],1,strlen($random[3])-3);
-               $http_Request=$this->sunat->requestHttp("https://e-consultaruc.sunat.gob.pe/cl-ti-itmrconsruc/jcrS00Alias?accion=consPorRuc&actReturn=1&modo=1&nroRuc=".$ruc."&numRnd=".$random,"POST");
+
+               // BUSCAR CUALQUIER RUC
+               $http_Request = $this->sunat->requestHttp("https://e-consultaruc.sunat.gob.pe/cl-ti-itmrconsruc/jcrS00Alias?accion=consPorRuc&actReturn=1&modo=1&nroRuc=".$ruc."&numRnd=".$random,"POST");
+               
                $document = new DiDom($http_Request['data'],false,'ISO-8859-1');
+
                $result = $document->find('.panel-primary')[0]->find('.list-group-item');
 
                
                $array_result=[];
+
                $array_data=[];
-               $array_data['numero_ruc']= $ruc;
 
-               
-               for ($i=0; $i <count($result) ; $i++) {
+               $array_data['numero_ruc'] = $ruc;
+                
+     
+               for ($i=0; $i < count($result) ; $i++) {
 
-                $result1=preg_replace("/[\t|\n|\r]+/", '',$result[$i]->find('.list-group-item')[0]->find('.row'));
+                $result1 = preg_replace("/[\t|\n|\r]+/", '',$result[$i]->find('.list-group-item')[0]->find('.row'));
+                
                 $node = new DiDom($result1[0]);
 
-                $node1=$node->find('.row')[0];
-                if(strpos(trim($node1->find('div')[1]->text()),"Número de RUC:") !== FALSE){
-                    //$data=explode("-",trim($node1->find('div')[2]->text()));
-                     $array_data['razon_social']= trim(explode("-",trim($node1->find('div')[2]->text()))[1]);
+                $node1 = $node->find('.row')[0];
 
+
+                if(strpos(trim($node1->find('div')[1]->text()),"Número de RUC:") !== false){
+
+                     $array_data['razon_social']= trim(explode("-",trim($node1->find('div')[2]->text()))[1]);
+      
                 }
                 if(strpos(trim($node1->find('div')[1]->text()),"Tipo Contribuyente") !== FALSE){
 
-                    $array_data['tipo_contribuyente']= trim($node1->find('div')[2]->text());
+                    $array_data['tipo_contribuyente'] = trim($node1->find('div')[2]->text());
 
+            
                 }
                 if(strpos(trim($node1->find('div')[1]->text()),"Tipo de Documento:") !== FALSE){
                     $document=explode("  ",trim($node1->find('div')[2]->text()));
@@ -240,20 +233,34 @@ class RucService
                     $array_data['domicilio_fiscal']=($consultar_sunat==true) ?  $direccion_sunat : preg_replace(['/\s+/','/^\s|\s$/'],[' ',''],$node1->find('div')[2]->text());
 
                  
-                        $empresas=Empresa::where('ruc',$ruc)->first();
-                        $departamento=Department::where('id','=',substr($empresas->ubigeo,0,2))->first();
-                        $provincia=Province::where('department_id','=',$departamento->id)->where('id',substr($empresas->ubigeo,0,4))->first();
-                        $district=District::where('id','=',$empresas->ubigeo)->first();
-                        $array_data['departamento']=strtoupper($departamento->description);
-                        $array_data['provincia']=strtoupper($provincia->description);
-                        $array_data['distrito']=strtoupper($district->description);
-                        $array_data['ubigeo']=strtoupper($empresas->ubigeo);
-              
-     
- 
-                
-         
                  
+                        $departamento=Department::where('id','=',substr($empresas->ubigeo,0,2))->first();
+                       
+                       
+                        if($departamento){
+                            $provincia=Province::where('department_id','=',$departamento->id)->where('id',substr($empresas->ubigeo,0,4))->first();
+                            $district=District::where('id','=',$empresas->ubigeo)->first();
+                            $array_data['departamento']=strtoupper($departamento->description);
+                            $array_data['provincia']=strtoupper($provincia->description);
+                            $array_data['distrito']=strtoupper($district->description);
+                            $array_data['ubigeo']=strtoupper($empresas->ubigeo);
+                            $array_data["dir_tipo_via"] = $empresas->tipo_via;
+                            $array_data["nombre_via"] = $empresas->nombre_via;
+                            $array_data["dir_cod_zona"] = $empresas->codigo_zona;
+                            $array_data["dir_tipo_zona"] = $empresas->tipo_zona;
+                            $array_data["dir_num"] =  $empresas->numero;
+                            $array_data["dir_interior"] = $empresas->interior;
+                            $array_data["dir_lote"] = $empresas->lote;
+                            $array_data["dir_dpto"] = $empresas->departamento;
+                            $array_data["dir_manzana"] = $empresas->manzana;
+                            $array_data["dir_km"] = $empresas->km;
+                            $array_data["dir_nomb_via"] = $empresas->nombre_via;
+                            $array_data["afectado_rus"] = $empresas->afectado_rus;
+                        }
+
+                  
+                    
+           
                 }
 
 
@@ -304,14 +311,12 @@ class RucService
                         for ($ii=0; $ii < count($cpe_pagos); $ii++) {
                             $data_cpe['cpe'][]= trim($cpe_pagos[$ii]);
                         }
-                        
                         $array_data['comprobantes_pagos']=$data_cpe['cpe'];
                     }else{
-
                         $array_data['comprobantes_pagos']=trim($node1->find('div')[2]->text());
 
                     }
-            
+                    //(count($comprobantes_pagos)>0) ? $comprobantes_pagos: trim($node1->find('div')[2]->text());
 
                 }
                 if(strpos(trim($node1->find('div')[1]->text()),"Sistema de Emisión Electrónica") !== FALSE){
@@ -335,6 +340,8 @@ class RucService
 
             }    
 
+      
+
           
             return response()->json([
                 "success" => true,
@@ -350,7 +357,7 @@ class RucService
                 ];
     
             }
-         }
+        }
         
 
     }

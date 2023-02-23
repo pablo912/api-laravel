@@ -43,7 +43,7 @@ Route::middleware('fox')->group( function () {
 
         Route::get('/{numero}', [SearchController::class, 'ruc'] );
         Route::get('/plus/{numero}', [SearchController::class, 'rusplus'] );
-        Route::get('/num/{numero}', [SearchController::class, 'rusplusdemo'] );
+
     }); 
     
 

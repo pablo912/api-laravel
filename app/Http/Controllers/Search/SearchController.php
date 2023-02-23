@@ -76,7 +76,8 @@ class SearchController extends Controller
             return $this->errorResponse('Formato RUC no valido.', 400);
             
         }
-
+    
+        // dd($this->rucService->rusplus($ruc));
 
         return $this->rucService->rusplus($ruc);
 

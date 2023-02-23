@@ -6,7 +6,7 @@
     'debug' => true,
     'url' => 'http://api.test/',
     'asset_url' => '/',
-    'timezone' => 'UTC',
+    'timezone' => 'America/Lima',
     'locale' => 'en',
     'fallback_locale' => 'en',
     'faker_locale' => 'en_US',
