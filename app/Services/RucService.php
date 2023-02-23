@@ -48,14 +48,19 @@ class RucService
 
             $direccion_completa = $this->getAddress($site);
 
-        
-                if(substr($ruc,0,2)=="20" ||  substr($ruc,0,2)=="10" || substr($ruc,0,2)=="15" || substr($ruc,0,2)=="17"){
+
+                if(substr($ruc,0,2)=="20"){
+
+                    $ubigeo = $site->ubigeo;
+
+                    $direccion_completa = $this->getAddress($site);
+
+                }else if(substr($ruc,0,2)=="10" || substr($ruc,0,2)=="15" || substr($ruc,0,2)=="17"){
 
                     $response_ubigeo = $this->sunat->loginInSunat("10448173173","44817317", "Elpoder20", 'direccion',$ruc);  
 
                     $ubigeo = $response_ubigeo['ubigeo'];
                     $direccion_completa = $response_ubigeo['direccion'];
-
 
                     $site->ubigeo = $ubigeo;
                     $site->direccion =$direccion_completa;
@@ -72,6 +77,7 @@ class RucService
                     $provincia=Province::where('id',$distrito->province_id)->first();
                     $departamento=Department::where('id',$provincia->department_id)->first();   
                 }
+
             }
 
             if(substr($ruc,0,2)=="20"){
@@ -79,19 +85,15 @@ class RucService
                 $ubigeos_data = [substr($site->ubigeo,0,2),substr($site->ubigeo,0,4),$site->ubigeo];
                 $ubigeo_data = $site->ubigeo;
                 
-        
-
             }else{
                 
-              
-
                  $ubigeos_data = ($distrito!=null) ?  [substr($ubigeo,0,2),substr($ubigeo,0,4),$ubigeo] : [null,null,null];
                  $ubigeo_data = $ubigeo;
           
             } 
 
-
             $response = [
+
                 'ruc' => $site->ruc,
                 'nombre_o_razon_social' =>$razon,
                 'direccion' =>trim($direccion_completa),
@@ -102,10 +104,8 @@ class RucService
                 'distrito' =>  ($distrito!=null) ?  strtoupper($distrito->description) : "",
                 'ubigeos' =>  $ubigeos_data,
                 'ubigeo' => $ubigeo_data
+
             ];
-
-        
-
 
             return [
                 'success' => true,
