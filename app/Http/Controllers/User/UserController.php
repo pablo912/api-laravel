@@ -91,7 +91,7 @@ class UserController extends Controller
         $data['password'] = Hash::make($request->password);
         $data['verified'] = User::USUARIO_NO_VERIFICADO;
         $data['verification_token'] = User::generarVerificationToken();
-        $data['token'] = User::generarVerificationToken();
+        $data['api_token'] = User::generarVerificationToken();
         $data['admin'] = User::USUARIO_REGULAR;
         $data['active'] = User::USUARIO_ACTIVO;
         $data['queries'] = 0;
