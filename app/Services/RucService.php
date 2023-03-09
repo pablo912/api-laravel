@@ -107,7 +107,7 @@ class RucService
                 'departamento' => ($distrito!=null) ? strtoupper(optional($departamento)->description) : "",
                 'provincia' => ($distrito!=null) ?  strtoupper($provincia->description) : "",
                 'distrito' =>  ($distrito!=null) ?  strtoupper($distrito->description) : "",
-                // 'ubigeos' =>  $ubigeos_data,
+                'ubigeos' =>  $ubigeos_data,
                 'ubigeo' => $ubigeo_data
 
             ];
