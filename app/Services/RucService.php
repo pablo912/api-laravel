@@ -393,9 +393,9 @@ class RucService
 
       
       
-        $dep = strtoupper(Department::where('id', $ubigeos_data[0])->first()->description);
-        $prov = strtoupper(Province::where('id', $ubigeos_data[1])->first()->description);
-        $dist = strtoupper(District::where('id', $ubigeos_data[2])->first()->description);
+        $dep = mb_strtoupper(Department::where('id', $ubigeos_data[0])->first()->description);
+        $prov = mb_strtoupper(Province::where('id', $ubigeos_data[1])->first()->description);
+        $dist = mb_strtoupper(District::where('id', $ubigeos_data[2])->first()->description);
 
 
 
