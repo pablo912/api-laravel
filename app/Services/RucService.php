@@ -393,9 +393,11 @@ class RucService
 
       
       
-        $dep = Department::where('id', $ubigeos_data[0])->first()->description;
-        $prov = Province::where('id', $ubigeos_data[1])->first()->description;
-        $dist = District::where('id', $ubigeos_data[2])->first()->description;
+        $dep = strtoupper(Department::where('id', $ubigeos_data[0])->first()->description);
+        $prov = strtoupper(Province::where('id', $ubigeos_data[1])->first()->description);
+        $dist = strtoupper(District::where('id', $ubigeos_data[2])->first()->description);
+
+
 
         $address = "{$tipo_via}{$nombre_via}{$numero}{$codigo_zona}{$tipo_zona}{$manzana}{$lote}{$departamento}{$interior}{$kilometro} {$dep} - {$prov} - {$dist}";
 
