@@ -72,6 +72,17 @@ trait ApiResult {
      }
 
 
+     public function validPlan($user){
+
+        if($user->plan_id == 1 && $user->queries >= (int)$user->limit){
+
+            return $this->errorResponse('Estimado usuario supero el limite de consultas por mes. Le recomendamos cambiar a la version premium',409);
+
+        }
+
+
+     }
+
 }
 
 

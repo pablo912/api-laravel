@@ -20,14 +20,19 @@ class Fox
     public function handle(Request $request, Closure $next): Response
     {   
 
-        $token = $request->header('token-fox');
+        if(!$request->query('token')){
 
-        $user = User::where('verification_token', $token)->first();
+            return $this->errorResponse('debe ingresar el token', 401);
+
+        }
+
+        $token = $request->query('token');
+ 
+        $user = User::where('token', $token)->first();
         
      
-
         if($user){
-
+        
             return $next($request);
 
         }

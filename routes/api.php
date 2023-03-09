@@ -4,6 +4,7 @@ use App\Http\Controllers\Invoice\InvoiceController;
 use App\Http\Controllers\Padron\PadronController;
 use App\Http\Controllers\Plan\PlanController;
 use App\Http\Controllers\Search\SearchController;
+use App\Http\Controllers\Update\UpdateController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -12,16 +13,8 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
 
 
 
@@ -53,13 +46,13 @@ Route::middleware('fox')->group( function () {
 Route::post('/boleta', [ InvoiceController::class, 'boleta']);
 Route::post('/factura', [ InvoiceController::class, 'factura']);
 
-
+Route::resource('/users', UserController::class );
 
 Route::middleware('auth:api')->group( function () {
 
     Route::delete('/logout', [UserController::class, 'logout'])->middleware('auth:api');
     Route::get('/renew', [UserController::class,'me']);
-    Route::resource('/users', UserController::class );
+
     Route::get('/padron',  [ PadronController::class, 'download']);
     Route::get('/extract',  [ PadronController::class, 'extract']);
     Route::get('/load',  [ PadronController::class, 'loadtdata']);
@@ -67,3 +60,15 @@ Route::middleware('auth:api')->group( function () {
 });
 
 
+Route::get('users/verify/{token}', [UserController::class, 'verify'])->name('verify');
+Route::get('users/{user}/resend', [UserController::class, 'resend'])->name('resend');
+
+
+Route::get('/updates', [UpdateController::class,'index']);
+
+Route::post('/recover', [UserController::class, 'recoverpassword']);
+
+
+Route::post('resetPassword', [UserController::class, 'resetPassword']);
+
+Route::get('/users/remember/{token}', [UserController::class, 'userForRememberToken'])->name('remember');

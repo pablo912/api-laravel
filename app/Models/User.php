@@ -32,7 +32,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name', 'surname', 'email', 'password','verification_token','verified','admin','active','plan_id',
-        'expiration_date'
+        'expiration_date','token','queries','limit'
     ];
 
     /**
@@ -41,7 +41,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'remember_token','verification_token'
     ];
 
     /**
@@ -59,10 +59,27 @@ class User extends Authenticatable
         return Str::random(40);
     }
 
+    public static function generarRecoverToken()
+    {
+        return Str::random(80);
+    }
+
     public function plan(){
 
         return $this->belongsTo(Plan::class);
 
     }
+
+    public function esVerificado()
+    {
+        return $this->verified == User::USUARIO_VERIFICADO;
+    }
+
+
+    public function esAdministrador()
+    {
+        return $this->admin == User::USUARIO_ADMINISTRADOR;
+    }
+
     
 }

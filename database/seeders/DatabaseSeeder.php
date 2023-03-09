@@ -27,10 +27,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         \App\Models\Plan::create([
-            'description' => 'Basico',
-        ]);
-        \App\Models\Plan::create([
-            'description' => 'Empresarial',
+            'description' => 'Free',
         ]);
         \App\Models\Plan::create([
             'description' => 'Premium',
@@ -38,14 +35,17 @@ class DatabaseSeeder extends Seeder
 
         \App\Models\User::create([
 
-            'name' => 'Pablo',
+            'name' => 'Joseph',
             'surname' => 'Santiago',
             'email' => 'admin@gmail.com',
             'password' => Hash::make('123456'),
-            'verification_token' => User::generarVerificationToken(),
-            'plan_id' => 3,
-            'admin' => true,
-            'expiration_date' => Carbon::now()->addYear()->format('Y-m-d')
+            'token' => User::generarVerificationToken(),
+            'plan_id' => 2,
+            'admin' => 'true',
+            'expiration_date' => Carbon::now()->addYear()->format('Y-m-d'),
+            'verified' => 1,
+            'queries' => 0,
+            'limit' => '200'
 
         ]);
 

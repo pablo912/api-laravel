@@ -102,17 +102,14 @@ class DniService  {
                             "nombres"=>$dni_query->nombres,
                             "apellido_paterno"=>$dni_query->apellido_paterno,
                             "apellido_materno"=>$dni_query->apellido_materno,
-                            "direccion"=> (env('VIEW_ADRESS_DNI')==true) ? $dni_query->domicilio : '',
+                           
                             "direccion_completa"=>$dni_query->domicilio." ".$dni_query->departamento." ".$dni_query->provincia." ".$dni_query->distrito,
                             "departamento"=>($ubigeo==null) ? '' : strtoupper($ubigeo->dpto),
                             "provincia"=>($ubigeo==null) ? '' : strtoupper($ubigeo->prov),
                             "distrito"=>($ubigeo==null) ? '' : strtoupper($ubigeo->distrito),
-                            "nombre_o_razon_social"=>$dni_query->nombre_completo,
                             "codigo_verificacion" =>$this->digit_control($numero),
                             "ubigeo_reniec"=>$array_ubigeo_reniec,
-                            "location_id"=>(env('VIEW_ADRESS_DNI')==true) ?  $array_ubigeo_sunat : [ null,null,null],
-                            "ubigeo"=>(env('VIEW_ADRESS_DNI')==true) ?
-                             $array_ubigeo_sunat : [ null,null,null],
+                           
                         ]
                        ]);
 

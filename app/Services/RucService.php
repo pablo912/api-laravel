@@ -62,7 +62,7 @@ class RucService
 
                     $response_ubigeo = $this->sunat->loginInSunat("10448173173","44817317", "Elpoder20", 'direccion',$ruc);  
                     
-              
+                    
 
                     $ubigeo = $response_ubigeo['ubigeo'];
                     $direccion_completa = $response_ubigeo['direccion'];
@@ -107,14 +107,14 @@ class RucService
                 'departamento' => ($distrito!=null) ? strtoupper(optional($departamento)->description) : "",
                 'provincia' => ($distrito!=null) ?  strtoupper($provincia->description) : "",
                 'distrito' =>  ($distrito!=null) ?  strtoupper($distrito->description) : "",
-                'ubigeos' =>  $ubigeos_data,
+                // 'ubigeos' =>  $ubigeos_data,
                 'ubigeo' => $ubigeo_data
 
             ];
 
             return [
                 'success' => true,
-                'agente_retencion' =>( $site->agente_retencion==1) ? 'SI' : 'NO',
+                // 'agente_retencion' =>( $site->agente_retencion==1) ? 'SI' : 'NO',
                 'data' => $response,
 
             ];

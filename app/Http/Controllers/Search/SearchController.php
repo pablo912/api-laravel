@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Search;
 
 use App\Http\Controllers\Controller;
 use App\Models\Sire;
+use App\Models\User;
 use App\Services\DniService;
 use App\Services\RucService;
 use App\Traits\ApiResponser;
@@ -28,64 +29,117 @@ class SearchController extends Controller
     }
 
 
-    public function dni($dni)
-    {
+    public function dni(Request $request, $dni)
+    {   
+
+
+
+        $token = $request->query('token');
+        $user = User::where('token', $token)->first();
+
+     
         if (strlen($dni) != 8 || !is_numeric($dni)) {
 
-            return $this->errorResponse(['dni' => ['Debe Ingresar 8 digitos numericos.']], 401);
+            return $this->errorResponse(['dni' => ['Debe Ingresar 8 digitos numericos.']], 409);
 
         }
 
-        $result=$this->dniService->processDni($dni,false)->original;
+        if($user->plan_id == 1 && $user->queries >= (int)$user->limit){
+
+            return $this->errorResponse('Estimado usuario supero el limite de consultas por mes. Le recomendamos cambiar a la version premium',409);
+
+        }
+
+
+        $result = $this->dniService->processDni($dni,false)->original;
+
+        $user->queries += 1;
+        $user->save(); 
 
         return $result;
        
     }
 
-    public function dniplus($dni)
-    {
-        if (strlen($dni) != 8 || !is_numeric($dni)) {
-            return $this->errorResponse(['dni' => ['Debe Ingresar 8 digitos numericos.']], 401);
-        }
+    public function dniplus(Request $request,$dni)
+    {   
 
-        $result=$this->dniService->processDni($dni,true)->original;
-
-          
-        return $result;
-       
-    }
+        $token = $request->query('token');
+        $user = User::where('token', $token)->first();
 
  
 
-    public function ruc($ruc){
+        if (strlen($dni) != 8 || !is_numeric($dni)) {
+            return $this->errorResponse(['dni' => ['Debe Ingresar 8 digitos numericos.']], 409);
+        }
 
-        if( strlen($ruc)!=11 || !is_numeric($ruc)){
-            
-            return $this->errorResponse('Formato RUC no valido.', 400);
+        if($user->plan_id == 1 && $user->queries >= (int)$user->limit){
+
+            return $this->errorResponse('Estimado usuario supero el limite de consultas por mes. Le recomendamos cambiar a la version premium',409);
+
         }
 
 
+        $result=$this->dniService->processDni($dni,true)->original;
+
+        $user->queries += 1;
+        $user->save(); 
+        
+        
+        return $result;
+       
+    }
+
+
+    public function ruc(Request $request,$ruc){
+
+        $token = $request->query('token');
+
+        $user = User::where('token', $token)->first();
+
+
+        if( strlen($ruc)!=11 || !is_numeric($ruc)){
+            
+            return $this->errorResponse('Formato RUC no valido.', 409);
+        }
+
+        if($user->plan_id == 1 && $user->queries >= (int)$user->limit){
+
+            return $this->errorResponse('Estimado usuario supero el limite de consultas por mes. Le recomendamos cambiar a la version premium',409);
+
+        }
+
+        $user->queries += 1;
+        $user->save(); 
         return $this->rucService->consultar_ruc($ruc);
 
     }
 
-    public function rusplus($ruc){
+    public function rusplus(Request $request,$ruc){
+
+        $token = $request->query('token');
+        
+        $user = User::where('token', $token)->first();
+
+      
 
         if( strlen($ruc)!=11 || !is_numeric($ruc)){
             
-            return $this->errorResponse('Formato RUC no valido.', 400);
+            return $this->errorResponse('Formato RUC no valido.', 409);
             
         }
-    
-        // dd($this->rucService->rusplus($ruc));
 
+        if($user->plan_id == 1 && $user->queries >= (int)$user->limit){
+
+            return $this->errorResponse('Estimado usuario supero el limite de consultas por mes. Le recomendamos cambiar a la version premium',409);
+
+        }
+ 
+        $user->queries += 1;
+        $user->save(); 
         return $this->rucService->rusplus($ruc);
 
 
     }
-
-
-
 
     protected function accessToken($request){
 
