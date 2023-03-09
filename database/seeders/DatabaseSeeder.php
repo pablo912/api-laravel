@@ -39,7 +39,7 @@ class DatabaseSeeder extends Seeder
             'surname' => 'Santiago',
             'email' => 'admin@gmail.com',
             'password' => Hash::make('123456'),
-            'token' => User::generarVerificationToken(),
+            'api_token' => User::generarVerificationToken(),
             'plan_id' => 2,
             'admin' => 'true',
             'expiration_date' => Carbon::now()->addYear()->format('Y-m-d'),

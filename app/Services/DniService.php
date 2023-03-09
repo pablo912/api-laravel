@@ -97,18 +97,19 @@ class DniService  {
                     return response()->json([
                         'success' => true,
                         "data"=>[
+                            
                             "numero"=>$numero,
                             "nombre_completo"=>$dni_query->nombre_completo,
                             "nombres"=>$dni_query->nombres,
                             "apellido_paterno"=>$dni_query->apellido_paterno,
                             "apellido_materno"=>$dni_query->apellido_materno,
                            
-                            "direccion_completa"=>$dni_query->domicilio." ".$dni_query->departamento." ".$dni_query->provincia." ".$dni_query->distrito,
-                            "departamento"=>($ubigeo==null) ? '' : strtoupper($ubigeo->dpto),
-                            "provincia"=>($ubigeo==null) ? '' : strtoupper($ubigeo->prov),
-                            "distrito"=>($ubigeo==null) ? '' : strtoupper($ubigeo->distrito),
-                            "codigo_verificacion" =>$this->digit_control($numero),
-                            "ubigeo_reniec"=>$array_ubigeo_reniec,
+                            // "direccion_completa"=>$dni_query->domicilio." ".$dni_query->departamento." ".$dni_query->provincia." ".$dni_query->distrito,
+                            // "departamento"=>($ubigeo==null) ? '' : strtoupper($ubigeo->dpto),
+                            // "provincia"=>($ubigeo==null) ? '' : strtoupper($ubigeo->prov),
+                            // "distrito"=>($ubigeo==null) ? '' : strtoupper($ubigeo->distrito),
+                            // "codigo_verificacion" =>$this->digit_control($numero),
+                            // "ubigeo_reniec"=>$array_ubigeo_reniec,
                            
                         ]
                        ]);

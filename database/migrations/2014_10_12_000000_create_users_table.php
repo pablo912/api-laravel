@@ -24,7 +24,7 @@ class CreateUsersTable extends Migration
             $table->string('verified')->default(User::USUARIO_NO_VERIFICADO);
             $table->string('verification_token')->nullable();
             $table->integer('plan_id')->unsigned();
-            $table->string('token')->nullable();
+            $table->string('api_token')->nullable();
             $table->string('admin')->default(User::USUARIO_REGULAR);
             $table->string('active')->default(User::USUARIO_ACTIVO);
             $table->date('expiration_date');

@@ -32,10 +32,7 @@ class SearchController extends Controller
     public function dni(Request $request, $dni)
     {   
 
-
-
-        $token = $request->query('token');
-        $user = User::where('token', $token)->first();
+        $user = $request->user();
 
      
         if (strlen($dni) != 8 || !is_numeric($dni)) {
@@ -63,8 +60,7 @@ class SearchController extends Controller
     public function dniplus(Request $request,$dni)
     {   
 
-        $token = $request->query('token');
-        $user = User::where('token', $token)->first();
+        $user = $request->user();
 
  
 
@@ -92,9 +88,7 @@ class SearchController extends Controller
 
     public function ruc(Request $request,$ruc){
 
-        $token = $request->query('token');
-
-        $user = User::where('token', $token)->first();
+        $user = $request->user();
 
 
         if( strlen($ruc)!=11 || !is_numeric($ruc)){
@@ -116,9 +110,7 @@ class SearchController extends Controller
 
     public function rusplus(Request $request,$ruc){
 
-        $token = $request->query('token');
-        
-        $user = User::where('token', $token)->first();
+        $user = $request->user();
 
       
 

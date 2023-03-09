@@ -11,7 +11,7 @@ use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasApiTokens;
+    use HasFactory, Notifiable;
 
     const USUARIO_VERIFICADO = '1';
     const USUARIO_NO_VERIFICADO = '0';
@@ -32,7 +32,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name', 'surname', 'email', 'password','verification_token','verified','admin','active','plan_id',
-        'expiration_date','token','queries','limit'
+        'expiration_date','api_token','queries','limit'
     ];
 
     /**

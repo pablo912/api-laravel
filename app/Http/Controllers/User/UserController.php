@@ -217,11 +217,11 @@ class UserController extends Controller
 
             $user = User::where('email',$request->email)->first();
 
-            $token = $user->createToken('apifox')->accessToken;
+            // $token = $user->createToken('apifox')->accessToken;
 
             $data = [
                 'user'  => $user,
-                'token' => $token
+                'token' => $user->api_token
                
             ];
 
@@ -235,12 +235,9 @@ class UserController extends Controller
 
     }
     
-    public function logout(){
+    public function logout(Request $request){
 
-        $user = auth()->user();
-        
-        $user->token()->delete();
-        $user->save();
+        $user = $request->user();
         
         $data = [
             
