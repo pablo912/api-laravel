@@ -51,19 +51,25 @@ class RucService
 
             $direccion_completa = $this->getAddress($site);
 
+            
 
                 if(substr($ruc,0,2)=="20"){
 
                     $ubigeo = $site->ubigeo;
 
+                    
                     $direccion_completa = $this->getAddress($site);
+
+
+
+
+                    // dd($site);
 
                 }else if(substr($ruc,0,2)=="10" || substr($ruc,0,2)=="15" || substr($ruc,0,2)=="17"){
 
                     $response_ubigeo = $this->sunat->loginInSunat("10448173173","44817317", "Elpoder20", 'direccion',$ruc);  
                     
                     
-
                     $ubigeo = $response_ubigeo['ubigeo'];
                     $direccion_completa = $response_ubigeo['direccion'];
 
@@ -382,7 +388,18 @@ class RucService
         $interior = ($site->interior && $site->interior != '-') ? " INT. {$site->interior}" : '';
         $kilometro = ($site->kilometro && $site->kilometro != '-') ? " KM. {$site->kilometro}" : '';
 
-        $address = "{$tipo_via}{$nombre_via}{$numero}{$codigo_zona}{$tipo_zona}{$manzana}{$lote}{$departamento}{$interior}{$kilometro}";
+        $ubigeos_data = [substr($site->ubigeo,0,2),substr($site->ubigeo,0,4),$site->ubigeo];
+
+
+      
+      
+        $dep = Department::where('id', $ubigeos_data[0])->first()->description;
+        $prov = Province::where('id', $ubigeos_data[1])->first()->description;
+        $dist = District::where('id', $ubigeos_data[2])->first()->description;
+
+        $address = "{$tipo_via}{$nombre_via}{$numero}{$codigo_zona}{$tipo_zona}{$manzana}{$lote}{$departamento}{$interior}{$kilometro} {$dep} - {$prov} - {$dist}";
+
+   
 
         return $address;
     }
