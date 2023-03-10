@@ -48,10 +48,7 @@ class RucService
         if($site){
 
             $razon = str_replace(['"',"'"],"",$site->razon);
-
-            $direccion_completa = $this->getAddress($site);
-
-            
+          
 
                 if(substr($ruc,0,2)=="20"){
 
@@ -60,10 +57,6 @@ class RucService
                     
                     $direccion_completa = $this->getAddress($site);
 
-
-
-
-                    // dd($site);
 
                 }else if(substr($ruc,0,2)=="10" || substr($ruc,0,2)=="15" || substr($ruc,0,2)=="17"){
 
