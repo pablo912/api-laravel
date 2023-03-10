@@ -1,6 +1,6 @@
 <!DOCTYPE html><html lang="en"><head><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
   <meta charset="utf-8">
-  <title>api</title>
+  <title>Api Foxcont</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
@@ -54,6 +54,6 @@
   <!-- <script type="text/javascript" src="https://unpkg.com/default-passive-events"></script> -->
 
  
-<script src="runtime.5b35372a9b14dd3b.js" type="module"></script><script src="polyfills.74df6d475aac9a61.js" type="module"></script><script src="main.9f16ee0afa8390c1.js" type="module"></script>
+<script src="runtime.5b35372a9b14dd3b.js" type="module"></script><script src="polyfills.74df6d475aac9a61.js" type="module"></script><script src="main.775f55ee036887a5.js" type="module"></script>
 
 </body></html>
