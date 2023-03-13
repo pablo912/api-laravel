@@ -133,6 +133,17 @@ class SearchController extends Controller
 
     }
 
+
+    public function tipocambio($desde,$hasta)
+    {
+        
+        $user_auth= User::where('id',auth()->user()->id)->first();
+
+        return $this->rucService->consultartipocambio($desde,$hasta);
+       
+    }
+
+
     protected function accessToken($request){
 
         $rules = [

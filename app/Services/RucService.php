@@ -14,19 +14,24 @@ use App\Services\BetaService;
 use App\Traits\ApiResponser;
 use DiDom\Document as DiDom;
 use Illuminate\Support\Facades\Http;
+use App\Services\TipoCambio;
+use Carbon\Carbon;
+use GuzzleHttp\Exception\RequestException;
 
 class RucService
 {
 
     use ApiResponser;
 
-    private $sunat;
 
+    private $sunat;
+    private $change;
    
-    public function __construct(SunatService $sunat)
+    public function __construct(SunatService $sunat, TipoCambio $change)
     {
     
         $this->sunat = $sunat;
+        $this->change = $change;
   
  
     }
@@ -398,6 +403,70 @@ class RucService
 
         return $address;
     }
+
+
+    public function consultartipocambio($desde,$hasta){
+        try {
+           // consultar:
+            $response = $this->change->curl_sbs("02",$desde,$hasta);
+            $fechaEmision = Carbon::parse($desde);
+            $fechaExpiracion = Carbon::parse($hasta);
+            $dias = $fechaExpiracion->diffInDays($fechaEmision);
+            $result=[];
+            if($response!=false){
+                $xp = new DiDom($response);
+                $pos = strpos($response,"No existe");
+                if($pos === false){
+                    $rows_body = $xp->find('body')[0]->find('table');
+                    if(count($rows_body)==0){
+                        sleep(5);
+                    //    goto consultar;
+                    }
+                    $rows = $xp->find('table')[11]->find('tr');
+                    if($dias>0){
+                         $inicio=1;
+                    }else{
+                        $inicio=0;
+                    }
+                    for ($y=$inicio; $y < count($rows); $y++) {
+                        $cell = $rows[$y]->find('td');
+                        for ($i=0; $i < count($cell); $i++) {
+                            $result[] = [
+                                'dia' => str_replace([" ", "\n", "\r", "\t"], '', $cell[$i++]->text()),
+                                'compra' => str_replace([" ", "\n", "\r", "\t"], '', $cell[$i++]->text()),
+                                'venta' => str_replace([" ", "\n", "\r", "\t"], '', $cell[$i++]->text()),
+                            ];
+                            $i--;
+                        }
+                    }
+                    $result_dolar=array(
+                        "moneda"=>"Dolar Americano",
+                        "codigo_sbs"=>"02",
+                        "result"=>$result
+                    );
+            
+                    return response()->json( [
+                        "success"=>true,
+                        "USD"=>$result_dolar,
+                    ]);
+                    }else{
+                        return response()->json( [
+                            "success"=>false,
+                            "message"=>"No existe informacion para la fecha elegida"
+                        ]);
+
+                    }
+            }else{
+                return response()->json( [
+                    "success"=>true,
+                    "message"=>"Ocurrio un Error al consultar"
+                ]);
+            }
+        } catch (RequestException $exception) {
+            return $exception->getResponse()->getBody();
+         }
+    }
+
 
 
 }

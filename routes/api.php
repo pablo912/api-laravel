@@ -38,6 +38,9 @@ Route::middleware('auth:api')->group( function () {
         Route::get('/plus/{numero}', [SearchController::class, 'rusplus'] );
 
     }); 
+
+
+    Route::get('/tipocambio/{desde}/{hasta}', [SearchController::class, 'tipocambio']);
     
 
 });
