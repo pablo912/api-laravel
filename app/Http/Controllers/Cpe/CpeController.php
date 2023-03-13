@@ -3,13 +3,17 @@
 namespace App\Http\Controllers\Cpe;
 
 use App\Http\Controllers\Controller;
+use App\Models\Company;
 use App\Models\User;
 use Exception;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 
 class CpeController extends Controller
 {   
+    protected $client;
 
     protected $document_state = [
         '-' => '-',
@@ -19,7 +23,7 @@ class CpeController extends Controller
         '3' => 'AUTORIZADO',
         '4' => 'NO AUTORIZADO'
     ];
-    
+
     protected $document = [
         '01' => 'FACTURA ELECTRONICA',
         '03' => 'BOLETA DE VENTA ELECTRONICA',
@@ -200,5 +204,39 @@ class CpeController extends Controller
             ];
         }
     }
+
+    public function access_token(){
+        try {
+            $company = Company::first();
+            $this->client = new Client(['verify' => false, 'http_errors' => false]);
+           $curl = [
+            CURLOPT_URL => "https://api-seguridad.sunat.gob.pe/v1/clientesextranet/".$company->client_id."/oauth2/token/",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => "grant_type=client_credentials&scope=https://api.sunat.gob.pe/v1/contribuyente/contribuyentes&client_id=".$company->client_id."&client_secret=".$company->client_secret,
+            CURLOPT_HTTPHEADER => array(
+                "content-type: application/x-www-form-urlencoded",
+            ),
+           ];
+          $responses = $this->client->request(strtoupper("POST"),"https://api-seguridad.sunat.gob.pe/v1/clientesextranet/".$company->client_id."/oauth2/token/", [
+               'curl' => $curl,
+           ]);
+           $token= json_decode($responses->getBody()->getContents());
+               return [
+              "success"=>true,
+              "access_token"=>$token->access_token
+          ];
+
+      } catch (RequestException $exception) {
+         return $exception->getResponse()->getBody();
+      }
+        //generarToken:
+    }
+
 
 }
