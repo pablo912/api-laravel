@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Cpe\CpeController;
 use App\Http\Controllers\Invoice\InvoiceController;
 use App\Http\Controllers\Padron\PadronController;
 use App\Http\Controllers\Plan\PlanController;
@@ -105,8 +106,19 @@ Route::prefix('apivfp')->group(function() {
     
         Route::get('/tipocambio/{desde}/{hasta}', [SearchController::class, 'tipocambiovfp']);
         
-    
+        
+        Route::prefix('cpe')->group(function() {
+
+            Route::post('/validarcpe', [ CpeController::class , 'apivalidarcpe' ]);
+
+        });
+
+
     });
+
+
+
+
 
 });
 
