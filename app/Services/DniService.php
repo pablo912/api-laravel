@@ -127,6 +127,8 @@ class DniService  {
 
     }
 
+    
+
 
     public function buscarDniSunat($userRuc, $userSunat, $userPassword,$number_dni,$plus){
 

@@ -134,6 +134,113 @@ class SearchController extends Controller
     }
 
 
+
+    // VISUAL FOX PRO
+
+    public function dnivfp(Request $request, $dni)
+    {   
+
+        $user = $request->user();
+
+     
+        if (strlen($dni) != 8 || !is_numeric($dni)) {
+
+            return $this->errorResponse(['dni' => ['Debe Ingresar 8 digitos numericos.']], 409);
+
+        }
+
+        if($user->plan_id == 1 && $user->queries >= (int)$user->limit){
+
+            return $this->errorResponse('Estimado usuario supero el limite de consultas por mes. Le recomendamos cambiar a la version premium',409);
+
+        }
+
+
+        $result = $this->dniService->processDni($dni,false)->original;
+
+        $user->queries += 1;
+        $user->save(); 
+
+        return $result;
+       
+    }
+
+    public function dniplusvfp(Request $request,$dni)
+    {   
+
+        $user = $request->user();
+
+ 
+
+        if (strlen($dni) != 8 || !is_numeric($dni)) {
+            return $this->errorResponse(['dni' => ['Debe Ingresar 8 digitos numericos.']], 409);
+        }
+
+        if($user->plan_id == 1 && $user->queries >= (int)$user->limit){
+
+            return $this->errorResponse('Estimado usuario supero el limite de consultas por mes. Le recomendamos cambiar a la version premium',409);
+
+        }
+
+
+        $result=$this->dniService->processDni($dni,true)->original;
+
+        $user->queries += 1;
+        $user->save(); 
+        
+        
+        return $result;
+       
+    }
+
+    public function rucvfp(Request $request,$ruc){
+
+        $user = $request->user();
+
+
+        if( strlen($ruc)!=11 || !is_numeric($ruc)){
+            
+            return $this->errorResponse('Formato RUC no valido.', 409);
+        }
+
+        if($user->plan_id == 1 && $user->queries >= (int)$user->limit){
+
+            return $this->errorResponse('Estimado usuario supero el limite de consultas por mes. Le recomendamos cambiar a la version premium',409);
+
+        }
+
+        $user->queries += 1;
+        $user->save(); 
+        return $this->rucService->consultar_ruc($ruc);
+
+    }
+
+    public function rusplusvfp(Request $request,$ruc){
+
+        $user = $request->user();
+
+      
+
+        if( strlen($ruc)!=11 || !is_numeric($ruc)){
+            
+            return $this->errorResponse('Formato RUC no valido.', 409);
+            
+        }
+
+        if($user->plan_id == 1 && $user->queries >= (int)$user->limit){
+
+            return $this->errorResponse('Estimado usuario supero el limite de consultas por mes. Le recomendamos cambiar a la version premium',409);
+
+        }
+ 
+        $user->queries += 1;
+        $user->save(); 
+        return $this->rucService->rusplus($ruc);
+
+
+    }
+
+
     public function tipocambio($desde,$hasta)
     {
         
@@ -142,6 +249,16 @@ class SearchController extends Controller
         return $this->rucService->consultartipocambio($desde,$hasta);
        
     }
+
+    public function tipocambiovfp($desde,$hasta)
+    {
+        
+        $user_auth= User::where('id',auth()->user()->id)->first();
+
+        return $this->rucService->consultartipocambio($desde,$hasta);
+       
+    }
+
 
 
     protected function accessToken($request){

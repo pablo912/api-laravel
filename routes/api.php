@@ -19,59 +19,97 @@ use Illuminate\Support\Facades\Route;
 
 
 
-Route::post('/login',  [ UserController::class, 'login']);
-Route::post('/sire', [SearchController::class, 'sire'] );
 
 
-Route::middleware('auth:api')->group( function () {
+Route::prefix('api')->group(function() {
 
-    Route::prefix('dni')->group(function() {
+    Route::post('/login',  [ UserController::class, 'login']);
+    Route::post('/sire', [SearchController::class, 'sire'] );
 
-        Route::get('/{numero}', [SearchController::class, 'dni'] );
-        Route::get('/plus/{numero}', [SearchController::class, 'dniplus'] );
+    Route::middleware('auth:api')->group( function () {
 
-    }); 
-
-    Route::prefix('ruc')->group(function() {
-
-        Route::get('/{numero}', [SearchController::class, 'ruc'] );
-        Route::get('/plus/{numero}', [SearchController::class, 'rusplus'] );
-
-    }); 
-
-
-    Route::get('/tipocambio/{desde}/{hasta}', [SearchController::class, 'tipocambio']);
+        Route::prefix('dni')->group(function() {
     
+            Route::get('/{numero}', [SearchController::class, 'dni'] );
+            Route::get('/plus/{numero}', [SearchController::class, 'dniplus'] );
+    
+        }); 
+    
+        Route::prefix('ruc')->group(function() {
+    
+            Route::get('/{numero}', [SearchController::class, 'ruc'] );
+            Route::get('/plus/{numero}', [SearchController::class, 'rusplus'] );
+    
+        }); 
+    
+    
+        Route::get('/tipocambio/{desde}/{hasta}', [SearchController::class, 'tipocambio']);
+        
+    
+    });
+
+    Route::post('/boleta', [ InvoiceController::class, 'boleta']);
+    Route::post('/factura', [ InvoiceController::class, 'factura']);
+
+    Route::resource('/users', UserController::class );
+    Route::get('/renew', [UserController::class,'me']);
+
+    Route::middleware('auth:api')->group( function () {
+
+        Route::delete('/logout', [UserController::class, 'logout'])->middleware('auth:api');
+    
+        Route::get('/padron',  [ PadronController::class, 'download']);
+        Route::get('/extract',  [ PadronController::class, 'extract']);
+        Route::get('/load',  [ PadronController::class, 'loadtdata']);
+        Route::get('/plan', [PlanController::class, 'index']);
+
+    });
+
+    Route::get('users/verify/{token}', [UserController::class, 'verify'])->name('verify');
+    Route::get('users/{user}/resend', [UserController::class, 'resend'])->name('resend');
+
+
+    Route::get('/updates', [UpdateController::class,'index']);
+
+    Route::post('/recover', [UserController::class, 'recoverpassword']);
+
+
+    Route::post('resetPassword', [UserController::class, 'resetPassword']);
+
+    Route::get('/users/remember/{token}', [UserController::class, 'userForRememberToken'])->name('remember');
+
 
 });
 
 
-Route::post('/boleta', [ InvoiceController::class, 'boleta']);
-Route::post('/factura', [ InvoiceController::class, 'factura']);
 
-Route::resource('/users', UserController::class );
-Route::get('/renew', [UserController::class,'me']);
 
-Route::middleware('auth:api')->group( function () {
+Route::prefix('apivfp')->group(function() {
 
-    Route::delete('/logout', [UserController::class, 'logout'])->middleware('auth:api');
+    Route::middleware('auth:api')->group( function () {
 
-    Route::get('/padron',  [ PadronController::class, 'download']);
-    Route::get('/extract',  [ PadronController::class, 'extract']);
-    Route::get('/load',  [ PadronController::class, 'loadtdata']);
-    Route::get('/plan', [PlanController::class, 'index']);
+        Route::prefix('dni')->group(function() {
+    
+            Route::get('/{numero}', [SearchController::class, 'dnivfp'] );
+            Route::get('/plus/{numero}', [SearchController::class, 'dniplusvfp'] );
+    
+        }); 
+    
+        Route::prefix('ruc')->group(function() {
+    
+            Route::get('/{numero}', [SearchController::class, 'rucvfp'] );
+            Route::get('/plus/{numero}', [SearchController::class, 'rusplusvfp'] );
+    
+        }); 
+    
+    
+        Route::get('/tipocambio/{desde}/{hasta}', [SearchController::class, 'tipocambiovfp']);
+        
+    
+    });
+
 });
 
 
-Route::get('users/verify/{token}', [UserController::class, 'verify'])->name('verify');
-Route::get('users/{user}/resend', [UserController::class, 'resend'])->name('resend');
 
 
-Route::get('/updates', [UpdateController::class,'index']);
-
-Route::post('/recover', [UserController::class, 'recoverpassword']);
-
-
-Route::post('resetPassword', [UserController::class, 'resetPassword']);
-
-Route::get('/users/remember/{token}', [UserController::class, 'userForRememberToken'])->name('remember');
