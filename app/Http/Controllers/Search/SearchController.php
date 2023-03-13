@@ -392,18 +392,21 @@ class SearchController extends Controller
                });
 
 
+             
+
             
                DB::table('sires')->insert($multiplied->toArray());
                
-               $response = [
+               $data = [
 
-                    'message' =>  'Sire actualizado'
+                    'result' =>  $multiplied,
+                    'success' => true
 
                ];
 
                
 
-               return $this->showMessage($response);
+               return $this->showMessage($data);
       
         }
 

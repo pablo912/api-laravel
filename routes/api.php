@@ -17,11 +17,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-
-
-
-
-
 Route::prefix('api')->group(function() {
 
     Route::post('/login',  [ UserController::class, 'login']);
@@ -83,8 +78,6 @@ Route::prefix('api')->group(function() {
 });
 
 
-
-
 Route::prefix('apivfp')->group(function() {
 
     Route::middleware('auth:api')->group( function () {
@@ -105,20 +98,11 @@ Route::prefix('apivfp')->group(function() {
     
     
         Route::get('/tipocambio/{desde}/{hasta}', [SearchController::class, 'tipocambiovfp']);
+       
         
-        
-        Route::prefix('cpe')->group(function() {
-
-            Route::post('/validarcpe', [ CpeController::class , 'apivalidarcpe' ]);
-
-        });
-
-
     });
 
-
-
-
+    Route::post('/sire', [SearchController::class, 'sire'] );
 
 });
 
